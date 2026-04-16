@@ -1,0 +1,71 @@
+services:
+  smartmatch-ocr:
+    build:
+      context: .
+      dockerfile: ./SmartMatch/OCRContainer/Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "${SMARTMATCH_OCR_API_PORT}:8000"
+    volumes:
+      - ${SMARTMATCH_MODELS_HOST_DIR}:${SMARTMATCH_MODELS_CONTAINER_DIR}
+      - ${SMARTMATCH_RUNTIME_HOST_DIR}:${SMARTMATCH_RUNTIME_CONTAINER_DIR}
+      - ${SMARTMATCH_JOINED_DATA_HOST_DIR}:${SMARTMATCH_JOINED_DATA_CONTAINER_DIR}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5).read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+  smartmatch-training:
+    build:
+      context: .
+      dockerfile: ./SmartMatch/TrainingService/Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "${SMARTMATCH_TRAINING_API_PORT}:8100"
+    volumes:
+      - ${SMARTMATCH_RUNTIME_HOST_DIR}:${SMARTMATCH_RUNTIME_CONTAINER_DIR}
+      - ${SMARTMATCH_JOINED_DATA_HOST_DIR}:${SMARTMATCH_JOINED_DATA_CONTAINER_DIR}
+      - ${SMARTMATCH_TRAINING_DATA_HOST_DIR}:${SMARTMATCH_TRAINING_DATA_CONTAINER_DIR}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8100/health', timeout=5).read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+  smartmatch-frontend:
+    build:
+      context: ./SmartMatch/OCRContainer/Backend/frontend
+    env_file:
+      - .env
+    depends_on:
+      smartmatch-ocr:
+        condition: service_healthy
+      smartmatch-training:
+        condition: service_healthy
+    ports:
+      - "${SMARTMATCH_FRONTEND_PORT}:80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s

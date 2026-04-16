@@ -1,0 +1,25 @@
+# TrOCR fine-tuning configuration
+
+data:
+  dir: ../../../OCR/joined_data
+  num_samples: null
+  train_split: 0.9
+  seed: 42
+
+output:
+  dir: ./outputs
+
+training:
+  batch_size: 8
+  max_target_length: 128
+  warmup_steps: 100
+  logging_steps: 50
+  save_total_limit: 2
+
+models:
+  kazars:
+    epochs: 10
+    lr: 3.0e-5
+  cyrillic:
+    epochs: 10
+    lr: 3.0e-5

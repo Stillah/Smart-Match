@@ -1,0 +1,29 @@
+{
+  "handwritten_label": 1,
+  "default_handwritten_model": "cyrillic_base",
+  "trocr_base_models": {
+    "kazars_base": {
+      "model_id": "kazars24/trocr-base-handwritten-ru",
+      "processor_id": "kazars24/trocr-base-handwritten-ru"
+    },
+    "cyrillic_base": {
+      "model_id": "cyrillic-trocr/trocr-handwritten-cyrillic",
+      "processor_id": "kazars24/trocr-base-handwritten-ru"
+    }
+  },
+  "trocr_model_paths": [
+    "../../../models/trocr/kazars",
+    "../../../models/trocr/cyrillic"
+  ],
+  "trocr_num_beams": 8,
+  "trocr_max_new_tokens": 128,
+  "trocr_length_penalty": 0.8,
+  "trocr_no_repeat_ngram_size": 3,
+  "printed_models": {
+    "text_detection_model_name": "PP-OCRv5_server_det",
+    "text_recognition_model_name": "eslav_PP-OCRv5_mobile_rec",
+    "doc_orientation_classify_model_name": "PP-LCNet_x1_0_doc_ori",
+    "doc_unwarping_model_name": "UVDoc",
+    "textline_orientation_model_name": "PP-LCNet_x0_25_textline_ori"
+  }
+}

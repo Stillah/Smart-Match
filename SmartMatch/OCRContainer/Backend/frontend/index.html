@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Match Console</title>
+  <link rel="stylesheet" href="/static/styles.css?v=2">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div>
+        <h1>Smart Match</h1>
+        <div class="hero-actions">
+          <a class="ghost-button" href="/ocr-docs" target="_blank" rel="noreferrer">OCR Swagger</a>
+          <a class="ghost-button" href="/training-docs" target="_blank" rel="noreferrer">Training Swagger</a>
+        </div>
+      </div>
+    </header>
+
+    <nav class="tab-bar">
+      <button class="tab-button active" data-tab="ocr">OCR</button>
+      <button class="tab-button" data-tab="training">Training</button>
+    </nav>
+
+    <main class="tab-content">
+      <section class="tab-panel active" id="tab-ocr">
+        <div class="panel-grid">
+          <section class="card control-card">
+            <div class="card-header">
+              <h2>Stage Selection</h2>
+              <p>Select any ordered subset of stages. The first selected stage accepts manual input.</p>
+            </div>
+            <div id="ocr-stage-list" class="stage-list"></div>
+            <div class="field-row">
+              <label for="ocr-handwritten-model">Handwritten model</label>
+              <select id="ocr-handwritten-model"></select>
+            </div>
+            <div class="field-row hidden" id="ocr-manual-label-row">
+              <label for="ocr-manual-label">Manual segment type</label>
+              <select id="ocr-manual-label">
+                <option value="printed">Printed</option>
+                <option value="handwritten">Handwritten</option>
+              </select>
+            </div>
+          </section>
+
+          <section class="card control-card">
+            <div class="card-header">
+              <h2>Manual Input</h2>
+              <p id="ocr-input-help">Choose stages to configure the first stage input. Use structured extraction to run the full production pipeline and receive the assignment JSON schema.</p>
+            </div>
+            <div class="field-row" id="ocr-file-row">
+              <label for="ocr-files">Files</label>
+              <input id="ocr-files" type="file" multiple>
+            </div>
+            <div class="field-row hidden" id="ocr-text-row">
+              <label for="ocr-text">Text input</label>
+              <textarea id="ocr-text" rows="8" placeholder="Paste text here when NER is the first selected stage."></textarea>
+            </div>
+            <div class="actions">
+              <button id="ocr-process-button" class="primary-button">Extract Structured JSON</button>
+              <button id="ocr-run-button" class="primary-button">Run OCR stages</button>
+            </div>
+            <p class="status-line" id="ocr-status"></p>
+          </section>
+        </div>
+
+        <section class="results-column">
+          <div id="ocr-structured-result" class="stage-results"></div>
+          <div id="ocr-results" class="stage-results"></div>
+        </section>
+      </section>
+
+      <section class="tab-panel" id="tab-training">
+        <div class="panel-grid">
+          <section class="card control-card">
+            <div class="card-header">
+              <h2>Training Launch</h2>
+              <p>Select a trainable model, adjust parameters, and start a job against the installed dataset.</p>
+            </div>
+            <div class="field-row">
+              <label for="training-model-select">Model</label>
+              <select id="training-model-select"></select>
+            </div>
+            <div class="status-chip" id="training-model-status"></div>
+            <div id="training-parameters" class="parameter-grid"></div>
+            <div class="actions">
+              <button id="training-start-button" class="primary-button">Start training job</button>
+            </div>
+            <p class="status-line" id="training-status"></p>
+          </section>
+
+          <section class="card jobs-card">
+            <div class="card-header">
+              <h2>Training Jobs</h2>
+              <p>Jobs update automatically while they are running.</p>
+            </div>
+            <div id="training-jobs" class="jobs-list"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <template id="artifact-template">
+    <article class="artifact-card">
+      <div class="artifact-header">
+        <strong class="artifact-label"></strong>
+        <a class="artifact-link" target="_blank" rel="noreferrer">Open</a>
+      </div>
+      <div class="artifact-body"></div>
+    </article>
+  </template>
+
+  <script src="/static/app.js?v=2" defer></script>
+</body>
+</html>

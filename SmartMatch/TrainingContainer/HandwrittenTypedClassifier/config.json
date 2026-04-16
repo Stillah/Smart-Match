@@ -1,0 +1,15 @@
+{
+    "img_folder": "./imgs",
+    "output_dir": "./output",
+    "batch_size": 32,
+    "num_epochs": 1,
+    "learning_rate": 1e-3,
+    "patience": 5,
+    "random_state": 42,
+    "target_size": [
+        64,
+        256
+    ],
+    "test_split": 0.3,
+    "val_split": 0.5
+}

@@ -1,0 +1,99 @@
+server {
+    listen 80;
+    server_name _;
+    client_max_body_size 200m;
+
+    location /api/ocr/ {
+        proxy_pass ${SMARTMATCH_OCR_API_UPSTREAM};
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 600s;
+        proxy_send_timeout 600s;
+        proxy_connect_timeout 10s;
+    }
+
+    location /api/training/ {
+        proxy_pass ${SMARTMATCH_TRAINING_API_UPSTREAM};
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 600s;
+        proxy_send_timeout 600s;
+        proxy_connect_timeout 10s;
+    }
+
+    location /process {
+        proxy_pass ${SMARTMATCH_OCR_API_UPSTREAM};
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 600s;
+        proxy_send_timeout 600s;
+        proxy_connect_timeout 10s;
+    }
+
+    location /ocr-docs {
+        proxy_pass ${SMARTMATCH_OCR_API_UPSTREAM}/docs;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Accept-Encoding "";
+        sub_filter "url: '/openapi.json'" "url: '/ocr-openapi.json'";
+        sub_filter_once on;
+        sub_filter_types text/html;
+    }
+
+    location /training-docs {
+        proxy_pass ${SMARTMATCH_TRAINING_API_UPSTREAM}/docs;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Accept-Encoding "";
+        sub_filter "url: '/openapi.json'" "url: '/training-openapi.json'";
+        sub_filter_once on;
+        sub_filter_types text/html;
+    }
+
+    location /ocr-openapi.json {
+        proxy_pass ${SMARTMATCH_OCR_API_UPSTREAM}/openapi.json;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /training-openapi.json {
+        proxy_pass ${SMARTMATCH_TRAINING_API_UPSTREAM}/openapi.json;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /static/ {
+        alias /usr/share/nginx/html/;
+    }
+
+    location = / {
+        root /usr/share/nginx/html;
+        try_files /index.html =404;
+    }
+
+    location / {
+        root /usr/share/nginx/html;
+        try_files $uri $uri/ /index.html;
+    }
+}

@@ -1,0 +1,7 @@
+.env
+.env.local
+.runtime/
+__pycache__/
+*.pyc
+SmartMatch/TrainingContainer/imgs.rar
+SmartMatch/TrainingContainer/data
